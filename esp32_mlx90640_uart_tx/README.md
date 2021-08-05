@@ -14,13 +14,12 @@
     * Tx pin 17
     * Rx pin 16
 
-![](image\pinout.png)
-
+![](image/pinout.png)
 
 ## Use library
 
 * WebSockets by Markus Sattler v2.3.6
-![](image\img1.png)
+![](image/img1.png)
 
 * MLX90640 library reference
     * [thermal_cam ](https://github.com/NIU-Rebit/thermal_cam) by NIU-Rebit
