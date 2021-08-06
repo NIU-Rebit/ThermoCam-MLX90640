@@ -8,11 +8,11 @@
 ## Pinout
 
 * I2C
-    * SDA pin 19
-    * SCL pin 23
+    * GPIO 19 = SDA
+    * GPIO 23 = SCL
 * Uart
-    * Tx pin 17
-    * Rx pin 16
+    * GPIO 17 = Tx
+    * GPIO 16 = Rx
 
 ![](image/pinout.png)
 

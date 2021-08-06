@@ -26,24 +26,46 @@ void setup()
 	delay(1000);
 	xQueue = xQueueCreate(1, sizeof(mlx90640To));
 	xTaskCreatePinnedToCore(
-		mlx90640Task,		 	/* pvTaskCode */
-		"mlx90640_Task", 		/* pcName */
-		100000,		 			/* usStackDepth */
-		NULL,		 			/* pvParameters */
-		1,			 			/* uxPriority */
-		&mlx90640TaskHandle,	/* pxCreatedTask */
-		0);			 			/* xCoreID */
+		mlx90640Task,		 /* pvTaskCode */
+		"mlx90640_Task",	 /* pcName */
+		100000,				 /* usStackDepth */
+		NULL,				 /* pvParameters */
+		1,					 /* uxPriority */
+		&mlx90640TaskHandle, /* pxCreatedTask */
+		0);					 /* xCoreID */
 	xTaskCreate(
-		receiveTask,   			/* Task function. */
-		"Receive_Task", 		/* name of task. */
-		10000,		   			/* Stack size of task */
-		NULL,		   			/* parameter of the task */
-		1,			   			/* priority of the task */
-		NULL);		   			/* Task handle to keep track of created task */
+		receiveTask,	/* Task function. */
+		"Receive_Task", /* name of task. */
+		10000,			/* Stack size of task */
+		NULL,			/* parameter of the task */
+		1,				/* priority of the task */
+		NULL);			/* Task handle to keep track of created task */
 }
 
 void loop()
 {
+	// if (Serial.available())
+	// {
+		// String str = Serial.readString();
+		// Serial.println(str);
+		// if (str == "ABC")
+		// 	Serial.println("str");
+
+		// int i = 0;
+		// do {
+		// 	// 讀取傳入的字元值
+		// char chr = Serial.read();
+		// Serial.println(chr);
+		// if (chr == 'A')
+		// 	Serial.println("chr");
+		// 	// 確認輸入的字元介於'0'和'9'，且索引i小於3（確保僅讀取前三個字）
+		// 	if (chr >= '0' && chr <= '9' && i < 3)
+		// 	{
+		// 		data[i] = chr;
+		// 		i++;
+		// 	}
+		// } while (chr != '\n');
+	// }
 	digitalWrite(LED_BUILTIN, HIGH);
 	delay(1000);
 	digitalWrite(LED_BUILTIN, LOW);
@@ -56,44 +78,50 @@ void receiveTask(void *parameter)
 	const TickType_t xTicksToWait = pdMS_TO_TICKS(100);
 	while (true)
 	{
-		/* receive data from the queue */
-		BaseType_t xStatus = xQueueReceive(xQueue, &mlx90640To, xTicksToWait);
-		/* check whether receiving is ok or not */
-		byte mlx90640Byte[768];
-		if (xStatus == pdPASS)
+		if (Serial.available())
 		{
-			for (int y = 0; y < 24; y++)
+			char chr = Serial.read();
+			if (chr == 'A')
 			{
-				for (int x = 0; x < 32; x++)
+				Serial.println("chr");
+				byte mlx90640Byte[768];
+				BaseType_t xStatus = xQueueReceive(xQueue, &mlx90640To, xTicksToWait);
+				if (xStatus == pdPASS)
 				{
-					float t = mlx90640To[32 * y + x];
-					byte b;
-					if (t > 40)
-						b = 255;
-					else if (t < 20)
-						b = 0;
-					else
-						b = (t - 20) / 20 * 256;
-					mlx90640Byte[32 * y + x] = b;
+					for (int y = 0; y < 24; y++)
+					{
+						for (int x = 0; x < 32; x++)
+						{
+							float t = mlx90640To[32 * y + x];
+							byte b;
+							if (t > 40)
+								b = 255;
+							else if (t < 20)
+								b = 0;
+							else
+								b = (t - 20) / 20 * 256;
+							mlx90640Byte[32 * y + x] = b;
+						}
+					}
+					Serial.write(mlx90640Byte, sizeof(mlx90640Byte));
+					// for (int y = 0; y < 24; y++)
+					// {
+					//   String line = "                                ";
+					//   for (int x = 0; x < 32; x++)
+					//   {
+					//     byte b = mlx90640Byte[32 * y + x];
+					//     if (b > 51)
+					//       line[x] = '@';
+					//     else
+					//       line[x] = ' ';
+					//   }
+					//   Serial.println(line);
+					// }
+					// Serial.println("-----------------------------");
+					// Serial.println(sizeof(byte));
+					// Serial.println(sizeof(mlx90640Byte));
 				}
 			}
-			Serial.write(mlx90640Byte, sizeof(mlx90640Byte));
-			// for (int y = 0; y < 24; y++)
-			// {
-			//   String line = "                                ";
-			//   for (int x = 0; x < 32; x++)
-			//   {
-			//     byte b = mlx90640Byte[32 * y + x];
-			//     if (b > 51)
-			//       line[x] = '@';
-			//     else
-			//       line[x] = ' ';
-			//   }
-			//   Serial.println(line);
-			// }
-			// Serial.println("-----------------------------");
-			// Serial.println(sizeof(byte));
-			// Serial.println(sizeof(mlx90640Byte));
 		}
 	}
 	vTaskDelete(NULL);
@@ -111,7 +139,8 @@ void mlx90640Task(void *parameter)
 	if (Wire.endTransmission() != 0)
 	{
 		Serial.println("MLX90640 not detected at default I2C address. Please check wiring. Freezing.");
-		while (1) ;
+		while (1)
+			;
 	}
 	Serial.println("MLX90640 online!");
 

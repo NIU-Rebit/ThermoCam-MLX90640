@@ -44,24 +44,3 @@ class Serial:
         except Exception as ex:
             print ("communicating error " + str(ex))
             return False
-        
-
-ser = Serial("COM7")
-try:
-    ser.open()
-    if ser.isOpen():
-        while True:
-            frame = ser.getIrFrame()
-            print('\n\n-------------------------')
-            for y in range(24):
-                for x in range(32):
-                    b = frame[y][x]
-                    if b > 50:
-                        print('@', end=' ')
-                    else:
-                        print(' ', end=' ')
-                print()
-    else:
-        print ("open serial port error")
-finally:
-    ser.close()
