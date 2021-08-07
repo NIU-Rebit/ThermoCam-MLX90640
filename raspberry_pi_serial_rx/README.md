@@ -2,7 +2,7 @@
 
 * Raspberry Pi 4 Model B 4GB
 * Ubuntu 20.04
-* pyserial v3.5
+* [pyserial](https://pyserial.readthedocs.io/en/latest/index.html) v3.5
 * /dev/ttyUSB0
 * Baud Rate = 115200
 
