@@ -3,7 +3,7 @@ import numpy as np
 from time import sleep, time
 
 class Serial:
-    def __init__(self, port) -> None:
+    def __init__(self, port='COM16') -> None:
         self.ser = serial.Serial()
         self.ser.port = port
         #115200,N,8,1

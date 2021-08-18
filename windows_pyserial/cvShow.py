@@ -4,7 +4,7 @@ from time import time
 import cv2
 HIGH = 30
 LOW = 20
-ser = Serial('COM16')
+ser = Serial()
 try:
     ser.open()
     if ser.isOpen():

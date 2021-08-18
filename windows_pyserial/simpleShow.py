@@ -1,7 +1,7 @@
 from irSerial import Serial
 from time import time
 
-ser = Serial('COM16')
+ser = Serial()
 try:
     ser.open()
     if ser.isOpen():
