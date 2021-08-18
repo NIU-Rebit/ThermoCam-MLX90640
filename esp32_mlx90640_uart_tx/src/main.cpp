@@ -22,7 +22,7 @@ void receiveTask(void *parameter);
 void setup()
 {
 	pinMode(LED_BUILTIN, OUTPUT);
-	Serial.begin(115200);
+	Serial.begin(250000);
 	delay(1000);
 	xQueue = xQueueCreate(1, sizeof(mlx90640To));
 	xTaskCreatePinnedToCore(
@@ -139,8 +139,7 @@ void mlx90640Task(void *parameter)
 	if (Wire.endTransmission() != 0)
 	{
 		Serial.println("MLX90640 not detected at default I2C address. Please check wiring. Freezing.");
-		while (1)
-			;
+		while (1);
 	}
 	Serial.println("MLX90640 online!");
 

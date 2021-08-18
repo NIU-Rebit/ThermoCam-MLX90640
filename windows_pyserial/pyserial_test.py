@@ -1,13 +1,13 @@
 import serial
 import numpy as np
-from time import sleep
+from time import sleep, time
 
 class Serial:
     def __init__(self, port) -> None:
         self.ser = serial.Serial()
         self.ser.port = port
         #115200,N,8,1
-        self.ser.baudrate = 115200
+        self.ser.baudrate = 250000
         self.ser.bytesize = serial.EIGHTBITS #number of bits per bytes
         self.ser.parity = serial.PARITY_NONE #set parity check
         self.ser.stopbits = serial.STOPBITS_ONE #number of stop bits
@@ -46,21 +46,24 @@ class Serial:
             return False
         
 
-ser = Serial("COM7")
+ser = Serial("COM16")
 try:
     ser.open()
     if ser.isOpen():
+        last_time = time()
         while True:
             frame = ser.getIrFrame()
-            print('\n\n-------------------------')
-            for y in range(24):
-                for x in range(32):
-                    b = frame[y][x]
-                    if b > 50:
-                        print('@', end=' ')
-                    else:
-                        print(' ', end=' ')
-                print()
+            print(f'{time()}\t-\t{last_time}\t=\t{time() - last_time}')
+            last_time = time() 
+            # print(f'\n{time()}\n-------------------------')
+            # for y in range(24):
+            #     for x in range(32):
+            #         b = frame[y][x]
+            #         if b > 50:
+            #             print('@', end=' ')
+            #         else:
+            #             print(' ', end=' ')
+            #     print()
     else:
         print ("open serial port error")
 finally:
