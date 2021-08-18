@@ -21,7 +21,7 @@ class Serial:
         self.ser.close()
 
     def open(self):
-        try:
+        try: 
             self.ser.open()
         except Exception as ex:
             print ("open serial port error " + str(ex))
@@ -39,32 +39,11 @@ class Serial:
             frame = np.zeros((24, 32), dtype=np.uint8)
             for y in range(24):
                 for x in range(32):
-                    frame[y][x] = response[y*32+x]
+                    frame[y][x] = response[y * 32 + x]
+            temp = frame.copy()[:, :5]
+            frame[:, :27] = frame.copy()[:, 5:]
+            frame[:, 27:] = temp
             return frame
         except Exception as ex:
             print ("communicating error " + str(ex))
             return False
-        
-
-ser = Serial("COM16")
-try:
-    ser.open()
-    if ser.isOpen():
-        last_time = time()
-        while True:
-            frame = ser.getIrFrame()
-            print(f'{time()}\t-\t{last_time}\t=\t{time() - last_time}')
-            last_time = time() 
-            # print(f'\n{time()}\n-------------------------')
-            # for y in range(24):
-            #     for x in range(32):
-            #         b = frame[y][x]
-            #         if b > 50:
-            #             print('@', end=' ')
-            #         else:
-            #             print(' ', end=' ')
-            #     print()
-    else:
-        print ("open serial port error")
-finally:
-    ser.close()
